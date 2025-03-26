@@ -146,20 +146,23 @@
             gap: 1rem;
             margin-top: 1rem;
             flex-wrap: wrap;
+           justify-content: flex-start; 
         }
 
-        .task-button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: transform 0.1s, background 0.3s;
-            flex: 1;
-            min-width: 200px;
-        }
+.task-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.1s, background 0.3s;
+    width: 200px;  /* 固定宽度 */
+    text-align: center;  /* 文字居中 */
+    display: inline-block;  /* 改为行内块元素 */
+    margin: 5px;  /* 添加一些外边距 */
+}
 
         .task-button.danger {
             background: var(--danger-color);
@@ -247,10 +250,11 @@
             font-size: 14px;
         }
 
-        .compact-button {
-            padding: 8px 16px;
-            flex: none;
-        }
+.compact-button {
+    padding: 12px 24px; 
+    width: 200px; 
+    margin: 5px; 
+}
 
         /* Monad钱包查询样式 */
         .monad-wallet-container {
