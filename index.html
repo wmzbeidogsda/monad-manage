@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monad 生态管理系统</title>
+    <title>Monad多功能管理</title>
     <style>
         :root {
-            --primary-color: #6366f1;
-            --secondary-color: #4f46e5;
-            --accent-color: #8b5cf6;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --background: #f8fafc;
-            --sidebar-bg: #1e293b;
-            --text-dark: #0f172a;
-            --text-light: #ffffff;
+            --primary-color: #4a90e2;
+            --danger-color: #ff4d4f;
+            --success-color: #52c41a;
+            --background-color: #f5f7fa;
+            --card-bg: #ffffff;
+            --sidebar-bg: #2c3e50;
+            --sidebar-width: 250px;
         }
 
         * {
@@ -24,236 +22,435 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: var(--background);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: #333;
             display: flex;
             min-height: 100vh;
         }
 
+        /* 侧边栏样式 */
         .sidebar {
-            width: 240px;
-            background: var(--sidebar-bg);
-            padding: 1.5rem;
-            position: fixed;
+            width: var(--sidebar-width);
+            background-color: var(--sidebar-bg);
+            color: white;
+            padding: 1rem 0;
             height: 100vh;
-            z-index: 100;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
         }
 
-        .logo {
-            color: var(--text-light);
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .sidebar-header {
+            padding: 0 1rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1rem;
         }
 
-        .nav-menu {
+        .sidebar-menu {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
         }
 
-        .nav-item {
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            color: rgba(255,255,255,0.8);
+        .menu-item {
+            padding: 0.8rem 1.5rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.3s;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
         }
 
-        .nav-item.active,
-        .nav-item:hover {
-            background: rgba(255,255,255,0.1);
-            color: var(--text-light);
+        .menu-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
+        .menu-item.active {
+            background-color: var(--primary-color);
+        }
+
+        .menu-item i {
+            margin-right: 10px;
+        }
+
+        .submenu {
+            list-style: none;
+            padding-left: 1.5rem;
+            display: none;
+        }
+
+        .submenu.show {
+            display: block;
+        }
+
+        .submenu-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submenu-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .submenu-item.active {
+            color: var(--primary-color);
+        }
+
+        /* 主内容区样式 */
         .main-content {
             flex: 1;
-            margin-left: 240px;
             padding: 2rem;
-            min-height: 100vh;
+            transition: margin-left 0.3s;
         }
 
-        .card {
-            background: white;
+        /* 欢迎页面样式 */
+        .welcome-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+            text-align: center;
+        }
+
+        .welcome-message {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: 300;
+            animation: fadeIn 1.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Monad交互项目管理样式 */
+        .monad-project-container {
+            display: none;
+        }
+
+        .monad-project-container.show {
+            display: block;
+        }
+
+        .stats-card {
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .card-header {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #e2e8f0;
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+           justify-content: flex-start; 
         }
 
-        #projectSection .stats-card {
-            background: linear-gradient(135deg, #f0f4ff, #f8fafc);
+.task-button {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.1s, background 0.3s;
+    width: 310px;  /* 固定宽度 */
+    text-align: center;  /* 文字居中 */
+    display: inline-block;  /* 改为行内块元素 */
+    margin: 5px;  /* 添加一些外边距 */
+}
+
+        .task-button.danger {
+            background: var(--danger-color);
+        }
+
+        .task-button.success {
+            background: var(--success-color);
+        }
+
+        .project-list {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
         }
 
         .project-item {
             padding: 1rem;
             margin: 0.5rem 0;
-            border: 1px solid #e2e8f0;
             border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+            position: relative;
+        }
+
+        .project-item.unopened {
+            background: #f8f9fa;
+            border: 2px solid var(--primary-color);
+        }
+
+        .status-dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .unopened-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .batch-input {
+            width: 100%;
+            height: 150px;
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+        }
+
+        .checkbox-group {
             display: flex;
             align-items: center;
             gap: 1rem;
-            transition: all 0.3s;
         }
 
-        .project-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        .select-all-checkbox {
+            margin-left: 10px;
+            transform: scale(1.2);
         }
 
-        #walletSection .control-panel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
+        .project-checkbox {
+            position: absolute;
+            left: 15px;
+            transform: scale(1.2);
         }
 
-        .address-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 1.5rem;
-        }
-
-        .address-table th {
-            background: var(--background);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 500;
-            color: var(--text-dark);
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .address-table td {
-            padding: 1rem;
-            border-bottom: 1px solid #e2e8f0;
-            background: white;
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
+        .quantity-control {
+            display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .btn-primary {
-            background: var(--primary-color);
+        #openQuantity {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid var(--primary-color);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+.compact-button {
+    padding: 12px 24px; 
+    width: 200px; 
+    margin: 5px; 
+}
+
+        /* Monad钱包查询样式 */
+        .monad-wallet-container {
+            display: none;
+        }
+
+        .monad-wallet-container.show {
+            display: block;
+            margin-top: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            padding: 2rem;
+        }
+
+        .control-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        input, select, button {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        button {
+            background: #2196F3;
             color: white;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.3s;
         }
 
-        .btn-primary:hover {
-            background: var(--secondary-color);
+        button:hover {
+            opacity: 0.9;
         }
 
-        .btn-danger {
-            background: var(--danger-color);
-            color: white;
+        #addresses {
+            width: 100%;
+            height: 120px;
+            margin: 1rem 0;
+            padding: 1rem;
+            font-family: monospace;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
         }
 
-        .content-section {
-            animation: fadeIn 0.3s ease-out;
+        .address-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        .address-table th,
+        .address-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .address-table th {
+            background: #f8f9fa;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .address-short a {
+            font-family: monospace;
+            color: #2196F3;
+            text-decoration: none;
+        }
+
+        .address-short a:hover {
+            text-decoration: underline;
+        }
+
+        .numeric {
+            font-family: monospace;
+            color: #333;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading-status {
+            animation: pulse 1.5s infinite;
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <nav class="sidebar">
-        <div class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            Monad
+    <!-- 侧边导航栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Monad管理</h2>
         </div>
-        <ul class="nav-menu">
-            <li class="nav-item active" onclick="showSection('projectSection')">📦 交互项目</li>
-            <li class="nav-item" onclick="showSection('walletSection')">💰 钱包查询</li>
+        <ul class="sidebar-menu">
+            <li class="menu-item" id="dashboard-menu">
+                <i>🏠</i> 控制面板
+            </li>
+            <li class="menu-item" id="function-menu">
+                <i>⚙️</i> 功能管理
+            </li>
+            <ul class="submenu" id="function-submenu">
+                <li class="submenu-item" data-target="project">交互管理</li>
+                <li class="submenu-item" data-target="wallet">钱包查询</li>
+            </ul>
         </ul>
-    </nav>
+    </div>
 
-    <main class="main-content">
-        <section id="projectSection" class="content-section">
-            <div class="card">
-                <div class="card-header">
-                    <h2>项目交互管理</h2>
-                </div>
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 欢迎页面 -->
+        <div class="welcome-container" id="welcome-page">
+            <div class="welcome-message">
+                二十岁偷的懒，三十岁日夜弥补
+            </div>
+        </div>
+
+        <!-- Monad交互项目管理 -->
+        <div class="monad-project-container" id="project-container">
+            <div class="container">
                 <div class="stats-card">
-                    <div style="margin-bottom: 1.5rem;">
-                        <div style="display: flex; gap: 2rem; margin-bottom: 1.5rem;">
-                            <div>
-                                <div style="font-size: 0.875rem; color: #64748b;">已打开</div>
-                                <div id="openedCount" style="font-size: 1.5rem; font-weight: 600;">0</div>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.875rem; color: #64748b;">未打开</div>
-                                <div id="unopenedCount" style="font-size: 1.5rem; font-weight: 600;">0</div>
-                            </div>
+                    <h2>项目统计</h2>
+                    <p>已打开：<span id="openedCount">0</span></p>
+                    <p>未打开：<span id="unopenedCount">0</span></p>
+                    
+                    <h3 style="margin-top:1.5rem;">批量添加项目</h3>
+                    <textarea class="batch-input" id="batchInput" placeholder="批量导入项目网址（每行一个）&#10;示例：&#10;https://www.kuru.io/swap&#10;https://monad.curvance.com/monad"></textarea>
+                    
+                    <div class="button-group">
+                        <button class="task-button success" onclick="batchAddProjects()">批量导入项目</button>
+                        <div class="quantity-control">
+                            <button class="task-button primary" onclick="openRandomProjects()">随机打开任务</button>
                         </div>
-
-                        <textarea 
-                            class="batch-input" 
-                            id="batchInput" 
-                            placeholder="批量导入项目网址（每行一个）\n示例：\nhttps://www.kuru.io/swap\nhttps://monad.curvance.com/monad"
-                            style="width: 100%; height: 120px; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;"
-                        ></textarea>
-
-                        <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                            <button class="btn btn-primary" onclick="batchAddProjects()">批量导入</button>
-                            <button class="btn btn-primary" onclick="openRandomProject()">随机打开</button>
-                            <button class="btn btn-danger" onclick="clearProgress()">重置进度</button>
-                        </div>
-
-                        <div style="margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem;">
-                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)" 
-                                    style="width: 16px; height: 16px;">
-                                全选
-                            </label>
-                            <button class="btn btn-danger" onclick="batchDelete()">批量删除</button>
-                        </div>
+                        <button class="task-button danger" onclick="clearProgress()">重置已打开</button>
                     </div>
 
-                    <div class="project-list">
-                        <h3 style="margin-bottom: 1rem;">项目列表</h3>
-                        <div id="projectList" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    <div class="checkbox-group" style="margin-top:1.5rem;">
+                        <input type="checkbox" id="selectAll" class="select-all-checkbox" onchange="toggleSelectAll(this.checked)">
+                        <label for="selectAll">全选</label>
+                        <button class="task-button danger compact-button" onclick="batchDelete()">批量删除</button>
+                                                <label>自定义打开数量:</label>
+                         <input type="number" id="openQuantity" min="1" value="1" title="每次打开数量">
+
                     </div>
+                </div>
+
+                <div class="project-list">
+                    <h3>项目列表</h3>
+                    <div id="projectList"></div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section id="walletSection" class="content-section" style="display: none;">
-            <div class="card">
-                <div class="card-header">
-                    <h2>钱包状态查询</h2>
-                </div>
+        <!-- Monad钱包查询 -->
+        <div class="monad-wallet-container" id="wallet-container">
+            <div class="container">
                 <div class="control-panel">
                     <div class="input-group">
-                        <input type="text" id="apiKey" placeholder="API 密钥" 
-                            style="width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <label>API密钥:</label>
+                        <input type="text" id="apiKey" placeholder="输入API密钥">
                     </div>
                     <div class="input-group">
-                        <select id="threads" style="width: 100%; padding: 0.75rem;">
+                        <label>查询线程数:</label>
+                        <select id="threads">
                             <option value="1">1线程</option>
                             <option value="2">2线程</option>
                             <option value="3" selected>3线程</option>
@@ -261,50 +458,100 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <input type="number" id="interval" value="1000" min="500" 
-                            style="width: 100%; padding: 0.75rem;">
+                        <label>线程间隔(毫秒):</label>
+                        <input type="number" id="interval" value="1000" min="500">
                     </div>
                 </div>
 
-                <textarea 
-                    id="addresses" 
-                    placeholder="输入钱包地址（每行一个）"
-                    style="width: 100%; height: 120px; margin: 1.5rem 0; padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px;"
-                ></textarea>
+                <textarea id="addresses" placeholder="输入钱包地址，每行一个"></textarea>
 
-                <button class="btn btn-primary" onclick="startAnalysis()" style="width: 100%;">开始分析</button>
+                <button onclick="startAnalysis()" style="width: 100%">开始查询</button>
 
-                <div style="margin: 2rem 0; display: flex; gap: 2rem;">
-                    <div>
-                        <div style="font-size: 0.875rem; color: #64748b;">总 MON</div>
-                        <div id="totalMON" style="font-size: 1.5rem; font-weight: 600;">0.0000</div>
+                <div class="stats-bar" id="globalStats">
+                    <div class="stat-item">
+                        <span class="stat-label">总 MON:</span>
+                        <span class="stat-value" id="totalMON">0.0000</span>
                     </div>
-                    <div>
-                        <div style="font-size: 0.875rem; color: #64748b;">总质押aprMON</div>
-                        <div id="totalAprMON" style="font-size: 1.5rem; font-weight: 600;">0.0000</div>
+                    <div class="stat-item">
+                        <span class="stat-label">总质押aprMON:</span>
+                        <span class="stat-value" id="totalAprMON">0.0000</span>
                     </div>
                 </div>
 
                 <table class="address-table">
                     <thead>
                         <tr>
+                            <th>序号</th>
                             <th>地址</th>
                             <th>MON余额</th>
                             <th>aprMON余额</th>
-                            <th>交易数</th>
-                            <th>活动数</th>
-                            <th>内部交易</th>
-                            <th>交互合约</th>
+                            <th>Transaction</th>
+                            <th>Activity</th>
+                            <th>Internal Transaction</th>
+                            <th>交互合约数量</th>
                         </tr>
                     </thead>
                     <tbody id="resultBody"></tbody>
                 </table>
             </div>
-        </section>
-    </main>
+        </div>
+    </div>
 
     <script>
-        // 交互项目管理逻辑
+        // 导航功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardMenu = document.getElementById('dashboard-menu');
+            const functionMenu = document.getElementById('function-menu');
+            const functionSubmenu = document.getElementById('function-submenu');
+            const welcomePage = document.getElementById('welcome-page');
+            const walletContainer = document.getElementById('wallet-container');
+            const projectContainer = document.getElementById('project-container');
+            const submenuItems = document.querySelectorAll('.submenu-item');
+
+            // 控制面板点击事件
+            dashboardMenu.addEventListener('click', function() {
+                welcomePage.style.display = 'flex';
+                walletContainer.classList.remove('show');
+                projectContainer.classList.remove('show');
+                functionSubmenu.classList.remove('show');
+                document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+                this.classList.add('active');
+            });
+
+            // 功能管理点击事件
+            functionMenu.addEventListener('click', function() {
+                functionSubmenu.classList.toggle('show');
+                this.classList.toggle('active');
+            });
+
+            // 子菜单点击事件
+            submenuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    // 隐藏所有内容
+                    welcomePage.style.display = 'none';
+                    walletContainer.classList.remove('show');
+                    projectContainer.classList.remove('show');
+                    
+                    // 显示选中的内容
+                    if (target === 'wallet') {
+                        walletContainer.classList.add('show');
+                    } else if (target === 'project') {
+                        projectContainer.classList.add('show');
+                    }
+                    
+                    // 更新菜单激活状态
+                    document.querySelectorAll('.submenu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 默认显示欢迎页面
+            dashboardMenu.click();
+        });
+
+        // Monad交互项目管理功能
         let projects = JSON.parse(localStorage.getItem('projects')) || [];
         let openedProjects = JSON.parse(localStorage.getItem('openedProjects')) || [];
         let selectedProjects = new Set();
@@ -314,16 +561,49 @@
                 const urlObj = new URL(url);
                 let hostname = urlObj.hostname.replace(/^www\./, '');
                 let path = urlObj.pathname.replace(/^\//, '').split('/')[0];
+                
                 const nameParts = [
                     hostname.split('.')[0],
                     path.replace(/[^a-zA-Z0-9]/g, ' ')
                 ].filter(Boolean);
+
                 return nameParts.map(part => 
                     part.replace(/(^\w|\s\w)/g, m => m.toUpperCase())
                 ).join(' ');
             } catch {
                 return url.replace(/^https?:\/\//, '').split('/')[0];
             }
+        }
+
+        function openRandomProjects() {
+            const quantity = parseInt(document.getElementById('openQuantity').value) || 1;
+            
+            if (projects.length === 0) {
+                alert('请先导入项目！');
+                return;
+            }
+            
+            const unopened = projects.filter(p => !openedProjects.includes(p.url));
+            if (unopened.length === 0) {
+                alert('所有项目已完成！');
+                return;
+            }
+
+            const maxQuantity = Math.min(quantity, unopened.length);
+            if (maxQuantity < quantity) {
+                alert(`未完成项目不足，本次将打开${maxQuantity}个`);
+            }
+
+            const shuffled = unopened.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, maxQuantity);
+
+            selected.forEach(project => {
+                openedProjects.push(project.url);
+                window.open(project.url, '_blank');
+            });
+
+            localStorage.setItem('openedProjects', JSON.stringify(openedProjects));
+            updateStats();
         }
 
         function toggleSelectAll(checked) {
@@ -341,8 +621,8 @@
         }
 
         function updateSelectAllState() {
-            const allChecked = projects.length > 0 && selectedProjects.size === projects.length;
-            document.getElementById('selectAll').checked = allChecked;
+            document.getElementById('selectAll').checked = 
+                projects.length > 0 && selectedProjects.size === projects.length;
         }
 
         function batchDelete() {
@@ -350,11 +630,14 @@
                 alert('请先选择要删除的项目！');
                 return;
             }
+
             if (confirm(`确定要删除选中的 ${selectedProjects.size} 个项目吗？`)) {
                 projects = projects.filter(p => !selectedProjects.has(p.url));
                 openedProjects = openedProjects.filter(url => !selectedProjects.has(url));
+                
                 localStorage.setItem('projects', JSON.stringify(projects));
                 localStorage.setItem('openedProjects', JSON.stringify(openedProjects));
+                
                 selectedProjects.clear();
                 updateStats();
                 alert('删除成功！');
@@ -373,27 +656,12 @@
 
             const existingUrls = new Set(projects.map(p => p.url));
             const uniqueProjects = newProjects.filter(p => 
-                !existingUrls.has(p.url) && /^https?:\/\//.test(p.url)
-            );
+                !existingUrls.has(p.url) && /^https?:\/\//.test(p.url));
             
             projects = [...projects, ...uniqueProjects];
             localStorage.setItem('projects', JSON.stringify(projects));
             updateStats();
             alert(`成功导入 ${uniqueProjects.length} 个新项目！`);
-        }
-
-        function openRandomProject() {
-            if (projects.length === 0) return alert('请先导入项目！');
-            const unopened = projects.filter(p => !openedProjects.includes(p.url));
-            if (unopened.length === 0) return alert('所有项目已完成！');
-            
-            const randomIndex = Math.floor(Math.random() * unopened.length);
-            const selectedProject = unopened[randomIndex];
-            
-            openedProjects.push(selectedProject.url);
-            localStorage.setItem('openedProjects', JSON.stringify(openedProjects));
-            window.open(selectedProject.url, '_blank');
-            updateStats();
         }
 
         function clearProgress() {
@@ -434,13 +702,68 @@
             updateSelectAllState();
         }
 
-        // 钱包查询逻辑
+        // 初始化旧数据迁移
+        if (localStorage.getItem('legacyProjects')) {
+            const legacyData = `
+                https://www.kuru.io/swap
+                https://monad.curvance.com/monad
+                https://bebop.xyz/
+                https://swap.bean.exchange/
+                https://monad.flap.sh/board
+                https://testnet.fukunad.xyz/
+                https://alpha.izumi.finance/trade/swap
+                https://app.hashflow.com/
+                https://kintsu.xyz/staking
+                https://www.magmastaking.xyz/
+                https://testnet-preview.monorail.xyz/
+                https://testapp.nitrofinance.xyz/trade
+                https://nfts2me.com/create/edition/
+                https://testnet.multipli.fi/
+                https://testnet.mudigital.net/
+                https://monad.nostra.finance/lend-borrow
+                https://octo.exchange/swap
+                https://pancakeswap.finance/?chain=monadTestnet
+                https://redbrick.land/web3-portal?tab=monad_testnet
+                https://www.monad.sky.trade/
+                https://app.timeswap.io/markets?chainId=10143
+                https://app.zona.finance/trade
+                https://testnet.monad.xyz/
+                https://www.kuru.io/markets
+                https://www.shmonad.xyz/
+                https://app.uniswap.org/swap?chain=monad
+                https://bebop.xyz/trade?network=monad&sell=MON&buy=WMON
+                https://testnet.narwhal.finance/slots
+                https://dex.dirol.network/swap
+                https://monad.ambient.finance/
+                https://alpha.clober.io/trade?chain=10143
+                https://app.crystal.exchange/swap
+                https://alpha-testnet.xlmeme.com/monad
+                https://stake.apr.io/
+            `;
+            
+            const legacyProjects = legacyData.split('\n')
+                .map(line => line.trim())
+                .filter(line => line)
+                .map(url => ({ name: generateProjectName(url), url: url }));
+            
+            projects = [...legacyProjects, ...projects];
+            localStorage.removeItem('legacyProjects');
+            localStorage.setItem('projects', JSON.stringify(projects));
+        }
+
+        // 初始化
+        updateStats();
+
+        // Monad钱包查询功能
         const API_CONFIG = {
             tokens: 'https://api.blockvision.org/v2/monad/account/tokens',
             transactions: 'https://api.blockvision.org/v2/monad/account/transactions',
             activities: 'https://api.blockvision.org/v2/monad/account/activities',
             internal: 'https://api.blockvision.org/v2/monad/account/internal/transactions'
         };
+
+        const APR_MON_CONTRACT = '0xb2f82d0f38dc453d596ad40a37799446cc89274a'.toLowerCase();
+        const MON_CONTRACT = '0x0000000000000000000000000000000000000000'.toLowerCase();
 
         class AddressAnalyzer {
             constructor() {
@@ -471,7 +794,9 @@
                 while (this.currentIndex < this.total) {
                     const index = this.currentIndex++;
                     const address = this.jobQueue[index];
+                    
                     const row = this.insertLoadingRow(index, address);
+                    
                     try {
                         const result = await this.analyzeAddress(address);
                         this.updateResultRow(row, result);
@@ -480,6 +805,7 @@
                         this.showErrorRow(row);
                         this.results[index] = this.createErrorResult(address);
                     }
+                    
                     this.updateGlobalStats();
                     await new Promise(r => setTimeout(r, this.interval));
                 }
@@ -488,7 +814,12 @@
             insertLoadingRow(index, address) {
                 const row = document.getElementById('resultBody').insertRow(index);
                 row.innerHTML = `
-                    <td class="address-short">${this.shortenAddress(address)}</td>
+                    <td class="numeric">${index + 1}</td>
+                    <td class="address-short">
+                        <a href="https://testnet.monadexplorer.com/address/${address}" target="_blank">
+                            ${this.shortenAddress(address)}
+                        </a>
+                    </td>
                     <td class="numeric loading-status">...</td>
                     <td class="numeric loading-status">...</td>
                     <td class="numeric loading-status">...</td>
@@ -500,18 +831,17 @@
             }
 
             updateResultRow(row, result) {
-                row.cells[0].textContent = this.shortenAddress(result.address);
-                row.cells[1].textContent = result.MON;
-                row.cells[2].textContent = result.aprMON;
-                row.cells[3].textContent = result.transactions;
-                row.cells[4].textContent = result.activities;
-                row.cells[5].textContent = result.internal;
-                row.cells[6].textContent = result.contracts;
+                row.cells[2].textContent = result.MON;
+                row.cells[3].textContent = result.aprMON;
+                row.cells[4].textContent = result.transactions;
+                row.cells[5].textContent = result.activities;
+                row.cells[6].textContent = result.internal;
+                row.cells[7].textContent = result.contracts;
                 Array.from(row.cells).forEach(c => c.classList.remove('loading-status'));
             }
 
             showErrorRow(row) {
-                row.innerHTML = '<td colspan="7" style="color: #ff4444">请求失败</td>';
+                row.innerHTML = '<td colspan="8" style="color: #ff4444">请求失败</td>';
             }
 
             createErrorResult(address) {
@@ -523,7 +853,7 @@
                     activities: 0,
                     internal: 0,
                     contracts: 0
-                }
+                };
             }
 
             updateGlobalStats() {
@@ -539,11 +869,35 @@
             }
 
             async analyzeAddress(address) {
-                const [tokens, txData] = await Promise.all([
-                    this.fetchWithRetry(`${API_CONFIG.tokens}?address=${address}`),
-                    this.fetchContractsData(address)
-                ]);
-                return this.processData(address, tokens, txData);
+                try {
+                    const [tokens, txData] = await Promise.all([
+                        this.fetchAllTokens(address),
+                        this.fetchContractsData(address)
+                    ]);
+                    return this.processData(address, tokens, txData);
+                } catch (error) {
+                    console.error('查询失败:', error);
+                    throw error;
+                }
+            }
+
+            async fetchAllTokens(address) {
+                let allTokens = [];
+                let cursor = '';
+                let hasNextPage = true;
+
+                while (hasNextPage) {
+                    const url = `${API_CONFIG.tokens}?address=${address}&cursor=${cursor}`;
+                    const data = await this.fetchWithRetry(url);
+                    
+                    if (data?.result?.data) {
+                        allTokens = allTokens.concat(data.result.data);
+                    }
+                    
+                    cursor = data?.result?.nextPageCursor || '';
+                    hasNextPage = !!cursor;
+                }
+                return allTokens;
             }
 
             async fetchContractsData(address) {
@@ -560,10 +914,12 @@
                     const data = await this.fetchWithRetry(
                         `${API_CONFIG.transactions}?address=${address}&cursor=${cursor}&limit=50`
                     );
+                    
                     data.result.data?.forEach(tx => {
                         tx.toAddress?.isContract && contracts.add(tx.toAddress.address.toLowerCase());
                         tx.contractAddress && contracts.add(tx.contractAddress.toLowerCase());
                     });
+
                     cursor = data.result.nextPageCursor;
                     if (!cursor) break;
                 }
@@ -578,16 +934,16 @@
                     contracts: contracts.size,
                     activities: activities.result?.total || 0,
                     internal: internal.result?.total || 0
-                }
+                };
             }
 
             processData(address, tokens, txData) {
-                const MON = tokens?.result?.data?.find(t => 
-                    t.contractAddress?.toLowerCase() === '0x0000000000000000000000000000000000000000'
+                const MON = tokens.find(t => 
+                    t.contractAddress?.toLowerCase() === MON_CONTRACT
                 )?.balance || '0';
 
-                const aprMON = tokens?.result?.data?.find(t => 
-                    t.contractAddress?.toLowerCase() === '0xb2f82d0f38dc453d596ad40a37799446cc89274a'
+                const aprMON = tokens.find(t => 
+                    t.contractAddress?.toLowerCase() === APR_MON_CONTRACT
                 )?.balance || '0';
 
                 return {
@@ -598,7 +954,7 @@
                     activities: txData.activities,
                     internal: txData.internal,
                     contracts: txData.contracts
-                }
+                };
             }
 
             async fetchWithRetry(url, retries = 3) {
@@ -646,24 +1002,6 @@
                 console.error('查询流程失败:', error);
             }
         }
-
-        // 侧边栏切换
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById(sectionId).style.display = 'block';
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            event.target.closest('.nav-item').classList.add('active');
-        }
-
-        // 初始化
-        if (localStorage.getItem('legacyProjects')) {
-            // 旧数据迁移代码（保持原样）
-        }
-        updateStats();
     </script>
 </body>
 </html>
